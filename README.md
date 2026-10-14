@@ -35,7 +35,7 @@ The workflow publishes only `dist/`. All local asset paths are relative, so CSS,
 
 Use `output/Vanshika-Portfolio-GitHub.zip` from the parent workspace for a clean upload package. It excludes the existing local `.git` history and Sites hosting identity. Keep `.github/workflows/pages.yml` at the repository root; do not upload the ZIP as a single file or nest the project inside another directory.
 
-If you use the current checkout directly, it already has a Sites Git remote. Add a separate remote named `github` for your repository rather than replacing an existing remote. Do not upload `.openai/`, `tmp/`, or the research dossier.
+The GitHub publication checkout in this workspace is `tmp/github-publish`, with `origin` pointing to `Vikasyadav25/protfolio_cara`. Keep any existing Sites checkout identity separate. Do not upload `.openai/`, `tmp/`, or the research dossier.
 
 Official reference: [GitHub Pages custom workflows](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages).
 
@@ -46,7 +46,7 @@ Official reference: [GitHub Pages custom workflows](https://docs.github.com/en/p
 - `dist/scrapbook.css`: screenshot-inspired paper texture, Behance collage, tilted Dribbble gallery and photo-led article cards.
 - `dist/recruiter.css`: recruiter-focused hierarchy, responsive work grids and engagement display.
 - `dist/dribbble-stats.js`: verified dated public shot views/likes snapshot.
-- `dist/app.js`: project overview content, filters, accessible native dialogs and copy-email interaction.
+- `dist/app.js`: project overview content, navigation, accessible native dialogs and copy-email interaction.
 - `dist/work-data.js`: additional professional project details and the searchable Behance/Dribbble publication archive.
 - `dist/assets`: locally stored original portfolio artwork, compressed WebP previews and downloadable resume.
 
@@ -56,11 +56,11 @@ Original artwork sources: `https://vanshika-pandey-protfolio.netlify.app/` and t
 
 ## Work presentation
 
-The page includes 17 featured entries: eleven professional experience/product/client-engagement overviews and six public cases/explorations. Impact figures are explicitly résumé-reported. The searchable archive contains 31 reviewed Behance publications and 24 visible Dribbble shots, preserving shared authorship/team attribution and avoiding a combined unique-project claim.
+The work section leads with six featured entries: PepsiCo, Pfizer, Bali.love, LeagueX, TelePay and To & From. Ten additional professional and public-concept entries remain available in the expandable More projects section. Impact figures are explicitly résumé-reported. The searchable archive contains 31 reviewed Behance publications and 24 visible Dribbble shots, preserving shared authorship/team attribution and avoiding a combined unique-project claim.
 
 The Behance, Dribbble and writing sections retain original artwork and paper details from the supplied references, with clear headings, readable cards and a consistent recruiter-focused hierarchy. The artwork links point to the original publications. Article photos are reused from the earlier portfolio; exact screenshot article-cover assets were not supplied. The repeating paper texture is a small SVG filter asset, without an additional image or animation dependency.
 
-Career details, capabilities, education, writing, public portfolio engagement and recommendation summaries are presented in dedicated sections. Figma access was unavailable during the update, so this is not claimed to match the unseen prototype exactly. The newer changes are available locally and in the GitHub upload package; the earlier private Sites deployment was not updated during this local/GitHub-focused work.
+Career details, capabilities, education, writing, public portfolio engagement and recommendation summaries are presented in dedicated sections. Figma access was unavailable during the update, so this is not claimed to match the unseen prototype exactly. The current website is published through GitHub Pages. The earlier private Sites deployment is separate.
 
 ## Refresh Dribbble engagement
 
@@ -69,3 +69,13 @@ Run `python scripts/refresh-dribbble.py` from the portfolio directory, review th
 Tiger company reference links are explicitly labeled as company context. No client screenshot or specific product assignment could be verified as Vanshika’s work.
 
 Tiger Analytics now has four separately navigable client-engagement cards. Their dialogs clearly attribute responsibilities to the overall Tiger role, because the résumé does not map specific deliverables to individual clients. Brand-colored card covers are editorial typography, not client dashboard screenshots.
+
+## Portfolio assistant
+
+The bottom-left portfolio guide runs entirely in the browser, using curated profile topics and existing project data. It supports project follow-ups, source links and an explicit fallback for unpublished facts. It is a local content guide, not a generative AI service. No chat API, key, external request or stored conversation is required. Extend topic aliases in `dist/portfolio-assistant.js` when adding verified content.
+
+## Current interaction design
+
+Desktop projects use sticky stacked cards with six pre-mounted preview faces. On phones, projects use a horizontal swipe carousel. `dist/project-showcase.css` and `dist/project-showcase.js` implement this behaviour without dependencies. The Dribbble gallery loops continuously, pauses on hover/focus, and respects reduced motion. The Behance collage features Insurance and Travel, with static diagonal lettering and an animated blue wave.
+
+The header stays visible with one résumé link. The corner navigator shows the current and next section. Home metrics retain public-source scope and rounding notes. The assistant is a browser-only portfolio guide.

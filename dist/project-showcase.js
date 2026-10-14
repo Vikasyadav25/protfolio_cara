@@ -1,0 +1,64 @@
+(() => {
+  'use strict';
+  const layout = document.querySelector('.project-showcase-layout');
+  if (!layout) return;
+  const carouselHint = document.createElement('p');
+  carouselHint.className = 'project-carousel-hint';
+  carouselHint.textContent = 'Swipe to explore all 6 projects';
+  layout.before(carouselHint);
+  const cards = [...layout.querySelectorAll('.featured-project-grid .project')];
+  const preview = layout.querySelector('.work-preview-stage');
+  const title = layout.querySelector('.work-preview-title');
+  const employer = layout.querySelector('.work-preview-employer');
+  const count = layout.querySelector('.work-preview-count');
+  const desktop = window.matchMedia('(min-width: 761px)');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const anchors = cards.map((card, index) => {
+    card.style.setProperty('--stack-index', index);
+    const key = card.querySelector('[data-project]').dataset.project;
+    const role = card.querySelector('.showcase-role');
+    if (role && window.portfolioProjects?.[key]) role.textContent = window.portfolioProjects[key].role;
+    const anchor = document.createElement('span');
+    anchor.className = 'project-scroll-anchor';
+    anchor.setAttribute('aria-hidden', 'true');
+    card.before(anchor);
+    const visual = card.querySelector('.project-visual,.tiger-cover').cloneNode(true);
+    visual.classList.add('work-preview-face');
+    visual.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
+    preview.append(visual);
+    return anchor;
+  });
+  const faces = [...preview.children];
+  let active = -1;
+  let pending = false;
+  const update = () => {
+    pending = false;
+    if (!desktop.matches) {
+      cards.forEach(card => card.classList.remove('is-current'));
+      active = -1;
+      return;
+    }
+    const marker = Math.min(230, window.innerHeight * .35);
+    const entry = Math.max(0, Math.min(1, (layout.getBoundingClientRect().top - 120) / (window.innerHeight * .6)));
+    preview.style.setProperty('--preview-angle', reducedMotion.matches ? '0deg' : `${entry * 18}deg`);
+    preview.style.setProperty('--preview-roll', reducedMotion.matches ? '0deg' : `${2 + entry * 3}deg`);
+    let index = 0;
+    anchors.forEach((anchor, i) => { if (anchor.getBoundingClientRect().top <= marker) index = i; });
+    if (active === index) return;
+    active = index;
+    cards.forEach((card, i) => card.classList.toggle('is-current', i === index));
+    const card = cards[index];
+    faces.forEach((face, i) => face.classList.toggle('is-active', i === index));
+    title.textContent = card.querySelector('.project-meta h3').textContent;
+    const key = card.querySelector('[data-project]').dataset.project;
+    const project = window.portfolioProjects?.[key];
+    employer.textContent = project?.type.replace('Professional work · ', '').replace('Professional client engagement · ', '') || '';
+    count.textContent = `${String(index + 1).padStart(2, '0')} / ${String(cards.length).padStart(2, '0')}`;
+  };
+  const schedule = () => { if (!pending) { pending = true; requestAnimationFrame(update); } };
+  window.addEventListener('scroll', schedule, {passive:true});
+  window.addEventListener('resize', schedule);
+  desktop.addEventListener('change', schedule);
+  reducedMotion.addEventListener('change', () => { active = -1; schedule(); });
+  update();
+})();

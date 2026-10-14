@@ -1,0 +1,41 @@
+/* Scroll-led project cards with a sticky visual, inspired by the supplied recording. */
+.project-showcase-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:90px;align-items:start;padding-top:14px}
+.recruiter-portfolio .project-showcase-layout .featured-project-grid{grid-template-columns:minmax(0,1fr);gap:46px}
+.recruiter-portfolio .project-showcase-layout .project{padding:33px;border-radius:25px;border:1px solid #e1e5ed;background:#fff;box-shadow:0 12px 30px #23345106;transform:rotate(-1deg);transition:transform .25s,border-color .25s,box-shadow .25s}
+.recruiter-portfolio .project-showcase-layout .project:nth-child(even){transform:rotate(1deg)}
+.recruiter-portfolio .project-showcase-layout .project.is-current{border-color:#b9c7e9;box-shadow:0 16px 34px #2334510c;transform:rotate(0)}
+.recruiter-portfolio .project-showcase-layout .project-entry-label{border:0;padding-bottom:0;margin-bottom:19px;font-size:10px}
+.recruiter-portfolio .project-showcase-layout .featured-project-grid .project-visual,.recruiter-portfolio .project-showcase-layout .featured-project-grid .tiger-cover{display:none}
+.recruiter-portfolio .project-showcase-layout .project-meta{padding:0}
+.recruiter-portfolio .project-showcase-layout .project-meta h3{font-size:33px;letter-spacing:-1px;margin-top:15px;line-height:1.25}
+.showcase-role{display:block;font-size:12px;color:#63738d;margin-top:10px}
+.recruiter-portfolio .project-showcase-layout .project-summary{font-size:14px;line-height:1.9;margin-top:22px;max-width:470px}
+.recruiter-portfolio .project-showcase-layout .project-action{margin-top:25px;padding-top:20px;font-size:12px}
+.work-preview-column{align-self:stretch;min-width:0}
+.work-sticky-preview{position:sticky;top:150px;width:min(100%,350px);margin:25px auto 0;transform:rotate(3deg);transition:transform .35s}
+.work-sticky-preview:hover{transform:rotate(0)}
+.work-preview-stage{min-height:330px;border-radius:23px;overflow:hidden;background:#e8ecf5;box-shadow:0 18px 42px #1c2b481a}
+.work-preview-stage>.tiger-cover{display:flex;min-height:350px;border-radius:0;padding:25px}
+.work-preview-stage .tiger-cover-name h3{font-size:34px;line-height:1.25;max-width:100%}
+.work-preview-stage .tiger-monogram{font-size:80px;top:120px}
+.work-preview-stage .tiger-cover-top{font-size:8px}
+.work-preview-stage>.project-visual{display:block;height:350px!important;aspect-ratio:auto!important;border-radius:0;position:relative}
+.work-preview-stage .type-brand{font-size:33px}
+.work-preview-stage .type-visual h4{font-size:26px;line-height:1.3}
+.work-preview-stage .type-top{font-size:8px;flex-wrap:wrap}
+.work-preview-stage .journey-labels{flex-wrap:wrap}
+.work-preview-stage .telepay-visual h4,.work-preview-stage .product-preview h4{font-size:28px;max-width:230px}
+.work-preview-stage .telepay-visual img,.work-preview-stage .product-preview img{width:145px;right:15px;bottom:30px}
+.work-preview-caption{padding:22px 6px 0;transform:rotate(-3deg)}
+.work-preview-count{font-size:10px;font-weight:700;color:#405ca9;letter-spacing:1px}
+.work-preview-caption h3{font-family:Manrope,sans-serif;font-size:23px;font-weight:650;line-height:1.4;margin-top:10px;letter-spacing:-.5px}
+.work-preview-employer{font-size:12px;line-height:1.7;color:#66748d;margin-top:7px}
+.work-preview-hint{display:block;font-size:10px;color:#8390a5;margin-top:20px}
+@media(max-width:1100px){.project-showcase-layout{gap:45px}.recruiter-portfolio .project-showcase-layout .project{padding:27px}.work-sticky-preview{top:130px}}
+@media(max-width:760px){.project-showcase-layout{display:block}.work-preview-column{display:none}.recruiter-portfolio .project-showcase-layout .featured-project-grid{gap:25px}.recruiter-portfolio .project-showcase-layout .project{padding:22px;transform:none!important;border-radius:18px}.recruiter-portfolio .project-showcase-layout .featured-project-grid .project-visual{display:block;height:250px;margin-bottom:20px}.recruiter-portfolio .project-showcase-layout .featured-project-grid .tiger-cover{display:flex;height:250px;margin-bottom:20px}.recruiter-portfolio .project-showcase-layout .project-meta h3{font-size:27px}.recruiter-portfolio .project-showcase-layout .project-summary{font-size:13px;margin-top:17px}}
+@media(prefers-reduced-motion:reduce){.recruiter-portfolio .project-showcase-layout .project,.work-sticky-preview{transition:none}}
+/* Recording behaviour: sticky card stack and pre-mounted cross-fading preview faces. */
+.recruiter-portfolio .project-showcase-layout .featured-project-grid{display:block;padding-bottom:45px}.project-scroll-anchor{display:block;height:0}.recruiter-portfolio .project-showcase-layout .project{position:sticky;top:calc(112px + var(--stack-index,0)*12px);z-index:calc(1 + var(--stack-index,0));margin-bottom:65px;transform:none;transition:border-color .2s,box-shadow .2s}.recruiter-portfolio .project-showcase-layout .project:nth-child(even),.recruiter-portfolio .project-showcase-layout .project.is-current{transform:none}.recruiter-portfolio .project-showcase-layout .project:last-child{margin-bottom:0}.work-sticky-preview{top:clamp(112px,17vh,150px);margin-top:15px;transform:none;transition:none}.work-sticky-preview:hover{transform:none}.work-preview-stage{position:relative;height:clamp(260px,42vh,350px);min-height:0;overflow:hidden;transform:perspective(1000px) rotateY(var(--preview-angle,0deg)) rotateZ(var(--preview-roll,2deg));transform-origin:center;backface-visibility:hidden}.work-preview-stage>.work-preview-face{position:absolute!important;inset:0;min-height:0!important;height:100%!important;width:100%;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .24s ease,visibility 0s linear .24s;transform:none!important}.work-preview-stage>.work-preview-face.is-active{opacity:1;visibility:visible;transition:opacity .24s ease,visibility 0s;z-index:1}.work-preview-caption{transform:none;padding-top:21px}.work-preview-caption h3{font-size:22px;margin-top:7px}.work-preview-hint{margin-top:12px}.work-preview-stage .type-tags,.work-preview-stage .journey-labels{gap:7px;flex-wrap:wrap}@media(max-width:760px){.recruiter-portfolio .project-showcase-layout .project{position:relative;top:auto;z-index:auto;margin-bottom:24px}.recruiter-portfolio .project-showcase-layout .featured-project-grid{padding-bottom:0}.project-scroll-anchor{display:none}}@media(prefers-reduced-motion:reduce){.work-preview-stage{transform:none}.work-preview-stage>.work-preview-face{transition:none}}
+/* Phone layout: one project at a time, horizontal swipe with a next-card preview. */
+@media(max-width:760px){.recruiter-portfolio .project-showcase-layout .featured-project-grid{display:flex;align-items:stretch;gap:15px;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scroll-padding-inline:3px;padding:4px 3px 20px;scrollbar-width:thin;scrollbar-color:#8b9dcc #e9edf6}.recruiter-portfolio .project-showcase-layout .featured-project-grid .project{position:relative;top:auto;flex:0 0 90%;min-width:0;margin:0;transform:none!important;scroll-snap-align:start;display:flex;flex-direction:column}.recruiter-portfolio .project-showcase-layout .project-open{height:100%;display:flex;flex-direction:column}.recruiter-portfolio .project-showcase-layout .project-meta{flex:1;width:100%}.recruiter-portfolio .project-showcase-layout .featured-project-grid .project-visual,.recruiter-portfolio .project-showcase-layout .featured-project-grid .tiger-cover{height:235px;min-height:235px;width:100%;flex-shrink:0}.recruiter-portfolio .project-showcase-layout .project-meta h3{font-size:25px}.project-carousel-hint{display:block;margin:0 0 12px;font-size:11px;color:#627497}.recruiter-portfolio .project-showcase-layout .featured-project-grid .project-entry-label{font-size:8px;line-height:1.7}}
+@media(min-width:761px){.project-carousel-hint{display:none}}

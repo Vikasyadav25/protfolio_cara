@@ -28,6 +28,7 @@
     };
   });
 
+  window.portfolioProjects = projects;
   const dialog = document.querySelector('.project-dialog');
   const detail = document.querySelector('#project-detail');
   let opener = null;
@@ -35,7 +36,7 @@
   const stats = window.dribbbleStats;
   const shotStats = slug => stats?.shots[String(slug).split('-')[0]];
   const statsMarkup = metric => metric ? `<span class="shot-stats"><span>${escapeHTML(metric.views)} views</span><span>♡ ${metric.likes.toLocaleString('en-US')} likes</span></span>` : '';
-  document.querySelectorAll('.shot-frame a').forEach(link => {
+  document.querySelectorAll('#shot-track .shot-frame a').forEach(link => {
     link.insertAdjacentHTML('beforeend', statsMarkup(shotStats(link.pathname.split('/').pop())));
   });
   if (stats) {
@@ -45,7 +46,20 @@
       return total + parseFloat(value) * (value.endsWith('m') ? 1000000 : value.endsWith('k') ? 1000 : 1);
     }, 0);
     const likes = metrics.reduce((total, metric) => total + metric.likes, 0);
-    document.querySelector('#dribbble-summary').innerHTML = `<div><strong>≈${Math.round(views / 1000)}K</strong><span>Views across ${metrics.length} shots</span></div><div><strong>${likes.toLocaleString('en-US')}</strong><span>Likes across ${metrics.length} shots</span></div>`;
+    const heroViews = document.querySelector('[data-hero-dribbble]');
+    if (heroViews) heroViews.textContent = `${Math.round(views / 1000)}K`;
+    const heroProjects = document.querySelector('[data-hero-projects]');
+    if (heroProjects) heroProjects.textContent = String(window.portfolioWork.archives.behance.length);
+
+    const visibility = document.querySelector('#dribbble-visibility');
+    if (visibility) {
+      visibility.querySelector('[data-dribbble-views]').textContent = `${Math.round(views / 1000)}K`;
+      visibility.querySelector('p').textContent = `Views across ${metrics.length} shots`;
+      visibility.querySelector('[data-dribbble-likes]').textContent = `${likes.toLocaleString('en-US')} likes · 173 followers ↗`;
+      visibility.title = `Public snapshot: ${stats.date}. View counts are rounded by Dribbble.`;
+    }
+
+    document.querySelector('#dribbble-summary').innerHTML = `<div><strong>${Math.round(views / 1000)}K</strong><span>Views across ${metrics.length} shots</span></div><div><strong>${likes.toLocaleString('en-US')}</strong><span>Likes across ${metrics.length} shots</span></div>`;
     const date = new Date(`${stats.date}T12:00:00Z`).toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
     document.querySelector('#dribbble-stats-date').textContent = `Dribbble snapshot · ${date} · Views are rounded by Dribbble.`;
   }
@@ -74,15 +88,26 @@
       filter.setAttribute('aria-pressed', String(active));
     });
     document.querySelectorAll('.project').forEach(card => {card.hidden = filterKey !== 'all' && !card.dataset.category.split(' ').includes(filterKey);});
-    document.querySelectorAll('.work-group').forEach(group => {group.hidden = !group.querySelector('.project:not([hidden])');});
+    document.querySelectorAll('.project-cluster,.work-group').forEach(group => {group.hidden = !group.querySelector('.project:not([hidden])');});
     const count = document.querySelectorAll('.project:not([hidden])').length;
     const labels = {professional:'professional work entries',exploration:'public concepts and redesigns',all:'entries across professional work and public concepts',enterprise:'enterprise and design-system entries',mobile:'mobile-experience entries'};
     const status = document.querySelector('#work-status');
     if (status) status.textContent = `${count} ${labels[filterKey] || 'entries'}. Select a card to read the project overview.`;
   };
   document.querySelectorAll('.filter').forEach(button => button.addEventListener('click', () => applyWorkFilter(button.dataset.filter)));
-  applyWorkFilter('professional');
-  document.querySelectorAll('a[href="#work"],a[href^="#project-"]').forEach(link => link.addEventListener('click', () => applyWorkFilter('professional')));
+  applyWorkFilter('all');
+  const revealLinkedWork = hash => {
+    if (!hash.startsWith('#')) return;
+    const target = document.getElementById(hash.slice(1));
+    const more = target?.closest('.more-work');
+    if (more) more.open = true;
+  };
+  document.addEventListener('click', event => {
+    const link = event.target.closest('a[href^="#"]');
+    if (link) revealLinkedWork(link.hash);
+  });
+  revealLinkedWork(window.location.hash);
+  document.querySelectorAll('a[href="#work"],a[href^="#project-"]').forEach(link => link.addEventListener('click', () => applyWorkFilter('all')));
   document.querySelector('.copy-email')?.addEventListener('click', async () => {
     const status = document.querySelector('.copy-status');
     try {
@@ -93,13 +118,110 @@
     }
   });
   const shotTrack = document.querySelector('#shot-track');
+  document.querySelectorAll('[data-auto-gallery]').forEach(shotTrack => {
+    const autoplayButton = shotTrack.closest('section').querySelector('.shot-autoplay');
+    if (!autoplayButton) return;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let enabled = !motion.matches;
+    let visible = false;
+    let hovering = false;
+    let focused = false;
+    let frame = 0;
+    let lastTime = 0;
+    let position = 0;
+    const originals = [...shotTrack.querySelectorAll('.shot-frame')];
+    const repeats = originals.map(original => {
+      const repeat = original.cloneNode(true);
+      repeat.dataset.galleryRepeat = '';
+      repeat.setAttribute('aria-hidden', 'true');
+      repeat.style.setProperty('--repeat-transform', getComputedStyle(original).transform);
+      repeat.querySelectorAll('a').forEach(link => { link.tabIndex = -1; });
+      shotTrack.append(repeat);
+      return repeat;
+    });
+    const loopWidth = () => repeats[0].offsetLeft - originals[0].offsetLeft;
+    const animate = time => {
+      const width = loopWidth();
+      position += Math.min(time - lastTime, 50) * .032;
+      if (width > 0 && position >= width) position %= width;
+      shotTrack.scrollLeft = position;
+      lastTime = time;
+      frame = requestAnimationFrame(animate);
+    };
+    const update = () => {
+      cancelAnimationFrame(frame);
+      autoplayButton.textContent = enabled ? 'Pause auto-scroll' : 'Play auto-scroll';
+      autoplayButton.setAttribute('aria-pressed', String(enabled));
+      if (enabled && visible && !hovering && !focused && !document.hidden) {
+        position = shotTrack.scrollLeft;
+        lastTime = performance.now();
+        frame = requestAnimationFrame(animate);
+      }
+    };
+    autoplayButton.addEventListener('click', () => { enabled = !enabled; update(); });
+    shotTrack.addEventListener('pointerenter', event => { if (event.pointerType === 'mouse') { hovering = true; update(); } });
+    shotTrack.addEventListener('pointerleave', () => { hovering = false; update(); });
+    shotTrack.addEventListener('pointerdown', event => { if (event.pointerType !== 'mouse') { enabled = false; update(); } });
+    shotTrack.addEventListener('focusin', () => { focused = true; update(); });
+    shotTrack.addEventListener('focusout', event => { focused = shotTrack.contains(event.relatedTarget); update(); });
+    document.addEventListener('visibilitychange', update);
+    motion.addEventListener('change', () => { enabled = !motion.matches; update(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(entries => { visible = entries[0].isIntersecting; update(); }).observe(shotTrack);
+    } else { visible = true; }
+    update();
+  });
   document.querySelectorAll('[data-shot-direction]').forEach(button => button.addEventListener('click', () => {
+    const shotTrack = button.closest('section').querySelector('.shot-track');
     if (!shotTrack) return;
     const frame = shotTrack.querySelector('.shot-frame');
     const step = (frame?.getBoundingClientRect().width || 320) * Number(button.dataset.shotDirection);
     shotTrack.scrollBy({left:step,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
   }));
   const archiveList = document.querySelector('#archive-list');
+  const compass = document.querySelector('.section-compass');
+  if (compass) {
+    const menu = compass.querySelector('.compass-menu');
+    const links = [...compass.querySelectorAll('.compass-links a')];
+    const sections = links.map(link => document.getElementById(link.hash.slice(1)));
+    const current = compass.querySelector('.compass-current');
+    const count = compass.querySelector('.compass-count');
+    const next = compass.querySelector('.compass-next');
+    let scheduled = false;
+    let active = -1;
+    const updateCompass = () => {
+      scheduled = false;
+      const marker = Math.min(180, window.innerHeight * .25);
+      let index = 0;
+      sections.forEach((section, i) => { if (section?.getBoundingClientRect().top <= marker) index = i; });
+      if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4) index = links.length - 1;
+      if (active === index) return;
+      active = index;
+      current.textContent = links[index].dataset.sectionLabel;
+      count.textContent = `${String(index + 1).padStart(2, '0')} / ${links.length}`;
+      links.forEach((link, i) => {
+        if (i === index) link.setAttribute('aria-current', 'location');
+        else link.removeAttribute('aria-current');
+      });
+      const upcoming = links[index + 1];
+      next.href = upcoming?.hash || '#intro';
+      next.querySelector('span').textContent = upcoming ? 'UP NEXT' : 'BACK TO TOP';
+      next.querySelector('strong').textContent = upcoming?.dataset.sectionLabel || 'Home';
+      next.querySelector('span:last-child').textContent = upcoming ? '↓' : '↑';
+    };
+    const scheduleCompass = () => {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(updateCompass);
+    };
+    window.addEventListener('scroll', scheduleCompass, {passive:true});
+    window.addEventListener('resize', scheduleCompass);
+    compass.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+    compass.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }
+    });
+    updateCompass();
+  }
   if (archiveList && window.portfolioWork) {
     let platform = 'behance';
     let expanded = false;
