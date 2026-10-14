@@ -56,7 +56,7 @@ Original artwork sources: `https://vanshika-pandey-protfolio.netlify.app/` and t
 
 ## Work presentation
 
-The page includes 13 featured entries: seven professional experience/product overviews and six public cases/explorations. Impact figures are explicitly résumé-reported. The searchable archive contains 31 reviewed Behance publications and 24 visible Dribbble shots, preserving shared authorship/team attribution and avoiding a combined unique-project claim.
+The page includes 17 featured entries: eleven professional experience/product/client-engagement overviews and six public cases/explorations. Impact figures are explicitly résumé-reported. The searchable archive contains 31 reviewed Behance publications and 24 visible Dribbble shots, preserving shared authorship/team attribution and avoiding a combined unique-project claim.
 
 The Behance, Dribbble and writing sections retain original artwork and paper details from the supplied references, with clear headings, readable cards and a consistent recruiter-focused hierarchy. The artwork links point to the original publications. Article photos are reused from the earlier portfolio; exact screenshot article-cover assets were not supplied. The repeating paper texture is a small SVG filter asset, without an additional image or animation dependency.
 
@@ -67,3 +67,5 @@ Career details, capabilities, education, writing, public portfolio engagement an
 Run `python scripts/refresh-dribbble.py` from the portfolio directory, review the changed snapshot, then push to GitHub. Counts are static, with the capture date displayed. Views retain Dribbble rounding; the total is approximate and covers the 24 archived shots. No frontend API or secret is required. Failed refreshes preserve the previous snapshot.
 
 Tiger company reference links are explicitly labeled as company context. No client screenshot or specific product assignment could be verified as Vanshika’s work.
+
+Tiger Analytics now has four separately navigable client-engagement cards. Their dialogs clearly attribute responsibilities to the overall Tiger role, because the résumé does not map specific deliverables to individual clients. Brand-colored card covers are editorial typography, not client dashboard screenshots.

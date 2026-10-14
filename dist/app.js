@@ -10,6 +10,24 @@
   };
   Object.assign(projects, window.portfolioWork?.additionalProjects || {});
   projects.enterprise.impact = '30% faster design-to-development handoff, reported in my résumé.';
+  // Client involvement is verified at résumé level; scope stays attributed to the overall role.
+  const tigerClients = [
+    ['pepsico', 'PepsiCo', 'Food & beverages'],
+    ['mars', 'Mars', 'Consumer goods'],
+    ['pfizer', 'Pfizer', 'Healthcare'],
+    ['stanley', 'Stanley Black & Decker', 'Tools & industrial products']
+  ];
+  tigerClients.forEach(([key, name, industry]) => {
+    projects[key] = {
+      title: `${name} · Client engagement`, type: 'Professional client engagement · Tiger Analytics',
+      role: 'Product Designer · Tiger Analytics', period: 'Within my Tiger Analytics tenure · July 2024 — Present', context: `${industry} · Enterprise UX`,
+      summary: `My résumé lists ${name} among the client engagements I have worked on through Tiger Analytics. This overview places the engagement within my broader enterprise product-design experience.`,
+      scopeTitle: 'My role at Tiger Analytics', scope: projects.enterprise.scope,
+      note: 'These responsibilities describe my overall Tiger Analytics role. Client-specific product names, individual deliverables, timelines and dashboard screens are not publicly documented in this portfolio.',
+      link: `mailto:vanshikapandey05@gmail.com?subject=${encodeURIComponent(name + ' client engagement')}`, cta: 'Discuss this engagement'
+    };
+  });
+
   const dialog = document.querySelector('.project-dialog');
   const detail = document.querySelector('#project-detail');
   let opener = null;
@@ -35,7 +53,7 @@
     const project = projects[button.dataset.project];
     if (!project || !dialog) return;
     opener = button;
-    detail.innerHTML = `${project.image ? `<img class="detail-cover" src="${project.image}" alt="${escapeHTML(project.title)}">` : ''}<div class="detail-content"><span class="eyebrow">${escapeHTML(project.type)}</span><h2 id="dialog-title">${escapeHTML(project.title)}</h2><p class="detail-lead">${escapeHTML(project.summary)}</p><dl class="detail-facts"><div><dt>ROLE / CONTRIBUTION</dt><dd>${escapeHTML(project.role)}</dd></div><div><dt>PERIOD</dt><dd>${escapeHTML(project.period)}</dd></div><div><dt>CONTEXT</dt><dd>${escapeHTML(project.context)}</dd></div></dl><h3>My contribution</h3><ul>${project.scope.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>${project.impact ? `<div class="detail-impact"><span class="eyebrow">REPORTED IMPACT</span><p>${escapeHTML(project.impact)}</p></div>` : ''}<p class="detail-note">${escapeHTML(project.note)}</p><a class="button button-dark" href="${project.link}" ${project.link.startsWith('https:') ? 'target="_blank" rel="noopener noreferrer"' : ''}>${escapeHTML(project.cta)} <span aria-hidden="true">↗</span></a></div>`;
+    detail.innerHTML = `${project.image ? `<img class="detail-cover" src="${project.image}" alt="${escapeHTML(project.title)}">` : ''}<div class="detail-content"><span class="eyebrow">${escapeHTML(project.type)}</span><h2 id="dialog-title">${escapeHTML(project.title)}</h2><p class="detail-lead">${escapeHTML(project.summary)}</p><dl class="detail-facts"><div><dt>ROLE / CONTRIBUTION</dt><dd>${escapeHTML(project.role)}</dd></div><div><dt>PERIOD</dt><dd>${escapeHTML(project.period)}</dd></div><div><dt>CONTEXT</dt><dd>${escapeHTML(project.context)}</dd></div></dl><h3>${escapeHTML(project.scopeTitle || 'My contribution')}</h3><ul>${project.scope.map(item => `<li>${escapeHTML(item)}</li>`).join('')}</ul>${project.impact ? `<div class="detail-impact"><span class="eyebrow">REPORTED IMPACT</span><p>${escapeHTML(project.impact)}</p></div>` : ''}<p class="detail-note">${escapeHTML(project.note)}</p><a class="button button-dark" href="${project.link}" ${project.link.startsWith('https:') ? 'target="_blank" rel="noopener noreferrer"' : ''}>${escapeHTML(project.cta)} <span aria-hidden="true">↗</span></a></div>`;
     dialog.showModal();
     document.body.classList.add('body-dialog-open');
     dialog.scrollTop = 0;
